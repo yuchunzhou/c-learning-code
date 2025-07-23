@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.10)
+project(close-on-exec)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+add_executable(main main.c log.c)
+add_executable(prog prog.c log.c)
