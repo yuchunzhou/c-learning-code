@@ -9,8 +9,6 @@
 
 #include "log.h"
 
-const static char *test_file = "test.txt";
-
 static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void log_lock_func(bool lock, void *udata) {
@@ -20,6 +18,8 @@ void log_lock_func(bool lock, void *udata) {
         pthread_mutex_unlock(&mutex);
     }
 }
+
+const static char *test_file = "test.txt";
 
 void read_data_finished(__sigval_t sv) { log_info("data is ready ..."); }
 
@@ -40,7 +40,9 @@ int main(int argc, char *argv[]) {
     }
     log_info("write %d bytes data to file", ret);
 
-    struct aiocb aio_cb = (struct aiocb){0};
+    struct aiocb aio_cb;
+    memset(&aio_cb, 0, sizeof(struct aiocb));
+
     aio_cb.aio_fildes = fd;
     aio_cb.aio_lio_opcode = LIO_READ;
 
@@ -49,7 +51,9 @@ int main(int argc, char *argv[]) {
     aio_cb.aio_nbytes = 1024;
     aio_cb.aio_reqprio = 0;
 
-    struct sigevent sig_event = (const struct sigevent){0};
+    struct sigevent sig_event;
+    memset(&sig_event, 0, sizeof(struct sigevent));
+
     sig_event.sigev_notify = SIGEV_THREAD;
     sig_event._sigev_un._sigev_thread._function = read_data_finished;
     sig_event._sigev_un._sigev_thread._attribute = NULL;
@@ -62,9 +66,13 @@ int main(int argc, char *argv[]) {
     }
 
     const struct aiocb *const aio_cb_array[1] = {&aio_cb};
-    struct timespec timeout = (struct timespec){0};
+
+    struct timespec timeout;
+    memset(&timeout, 0, sizeof(struct timespec));
+
     timeout.tv_sec = 1;
     timeout.tv_nsec = 0;
+
     ret = aio_suspend(aio_cb_array,
                       sizeof(aio_cb_array) / sizeof(aio_cb_array[0]), &timeout);
     if (ret == -1) {

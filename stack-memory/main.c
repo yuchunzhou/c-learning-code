@@ -3,12 +3,14 @@
 #include <memory.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/resource.h>
 
 #include "log.h"
 
 void print_stack_size_limit() {
-    struct rlimit rlimit = {0};
+    struct rlimit rlimit;
+    memset(&rlimit, 0, sizeof(struct rlimit));
 
     int ret = getrlimit(RLIMIT_STACK, &rlimit);
     if (ret == -1) {

@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
     log_info("offset of b: %ld", offsetof(struct Foo, b));
     log_info("offset of c: %ld", offsetof(struct Foo, c));
 
-    struct Foo foo = {0};
+    struct Foo foo;
     *((char *)&foo + offsetof(struct Foo, c)) = 2;
     log_info("c: %ld", foo.c);
 

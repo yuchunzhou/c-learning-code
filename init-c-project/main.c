@@ -12,8 +12,10 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    char *project_name = argv[1];
     struct stat stat_;
+    memset(&stat_, 0, sizeof(struct stat));
+
+    char *project_name = argv[1];
     int ret;
 
     ret = stat(project_name, &stat_);

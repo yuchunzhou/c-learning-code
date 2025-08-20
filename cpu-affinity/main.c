@@ -32,14 +32,18 @@ void *thread_func(void *args) {
 int main(int argc, char *argv[]) {
     log_set_lock(log_lock_func, NULL);
 
-    pthread_t thread = {0};
+    pthread_t thread;
+    memset(&thread, 0, sizeof(pthread_t));
+
     int ret = pthread_create(&thread, NULL, thread_func, NULL);
     if (ret < 0) {
         log_error("failed to create thread: %s", strerror(errno));
         exit(1);
     }
 
-    cpu_set_t cpu_set = {0};
+    cpu_set_t cpu_set;
+    memset(&cpu_set, 0, sizeof(cpu_set_t));
+
     CPU_ZERO(&cpu_set);
     CPU_SET(3, &cpu_set);
 
