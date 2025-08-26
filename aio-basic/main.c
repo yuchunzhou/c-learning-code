@@ -26,19 +26,11 @@ void read_data_finished(__sigval_t sv) { log_info("data is ready ..."); }
 int main(int argc, char *argv[]) {
     log_set_lock(log_lock_func, NULL);
 
-    int fd = open(test_file, O_RDWR | O_CREAT | O_TRUNC | O_SYNC, 0755);
+    int fd = open(test_file, O_RDONLY, 0755);
     if (fd == -1) {
         log_error("open file failed: %s", strerror(errno));
         exit(1);
     }
-
-    char *data = "hello world";
-    int ret = write(fd, data, strlen(data));
-    if (ret == -1) {
-        log_error("write data to test file failed: %s", strerror(errno));
-        exit(1);
-    }
-    log_info("write %d bytes data to file", ret);
 
     struct aiocb aio_cb;
     memset(&aio_cb, 0, sizeof(struct aiocb));
@@ -59,7 +51,7 @@ int main(int argc, char *argv[]) {
     sig_event._sigev_un._sigev_thread._attribute = NULL;
     aio_cb.aio_sigevent = sig_event;
 
-    ret = aio_read(&aio_cb);
+    int ret = aio_read(&aio_cb);
     if (ret == -1) {
         log_error("aio read failure: %s", strerror(errno));
         exit(1);
